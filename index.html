@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusConnect | College Event Discovery Platform</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
+    <style>
+        /* Loading screen */
+        #loadingScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #4361EE 0%, #7209B7 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+        
+        .loading-logo {
+            font-size: 4rem;
+            color: white;
+            margin-bottom: 20px;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .loading-text {
+            color: white;
+            font-size: 1.2rem;
+            font-family: 'Poppins', sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loadingScreen">
+        <div class="loading-logo">
+            <i class="fas fa-graduation-cap"></i>
+        </div>
+        <div class="loading-text">Loading CampusConnect...</div>
+    </div>
+
+    <div class="container">
+        <!-- Header/Navigation -->
+        <header class="header">
+            <nav class="navbar">
+                <div class="logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    <h1>CampusConnect</h1>
+                </div>
+                
+                <div class="nav-menu">
+                    <ul>
+                        <li class="active"><a href="#" id="homeLink"><i class="fas fa-home"></i> Home</a></li>
+                        <li><a href="#" id="eventsLink"><i class="fas fa-calendar-alt"></i> Events</a></li>
+                        <li><a href="#" id="clubsLink"><i class="fas fa-users"></i> Clubs</a></li>
+                        <li><a href="#" id="calendarLink"><i class="fas fa-calendar-day"></i> My Calendar</a></li>
+                        <li><a href="#" id="createLink"><i class="fas fa-plus-circle"></i> Create Event</a></li>
+                        <li class="notification-icon">
+                            <a href="#" id="notificationsLink">
+                                <i class="fas fa-bell"></i>
+                                <span class="badge">3</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="user-profile">
+                    <div class="user-avatar">
+                        <img src="https://ui-avatars.com/api/?name=Alex+Johnson&background=4A6FA5&color=fff&size=150" alt="User Avatar">
+                    </div>
+                    <div class="user-info">
+                        <span class="user-name">Alex Johnson</span>
+                        <span class="user-major">Computer Science</span>
+                    </div>
+                    <button class="menu-toggle" id="mobileMenuToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </nav>
+        </header>
+
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <ul>
+                <li class="active"><a href="#" id="mobileHomeLink"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="#" id="mobileEventsLink"><i class="fas fa-calendar-alt"></i> Events</a></li>
+                <li><a href="#" id="mobileClubsLink"><i class="fas fa-users"></i> Clubs</a></li>
+                <li><a href="#" id="mobileCalendarLink"><i class="fas fa-calendar-day"></i> My Calendar</a></li>
+                <li><a href="#" id="mobileCreateLink"><i class="fas fa-plus-circle"></i> Create Event</a></li>
+                <li><a href="#" id="mobileNotificationsLink"><i class="fas fa-bell"></i> Notifications <span class="badge">3</span></a></li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Hero Section -->
+            <section class="hero-section" id="heroSection">
+                <div class="hero-content">
+                    <h2>Discover Campus Events That Matter to You</h2>
+                    <p>Find academic, social, career, and cultural events happening across campus. Never miss out on opportunities to learn, connect, and grow.</p>
+                    <div class="search-bar">
+                        <input type="text" id="searchInput" placeholder="Search events by name, club, or category...">
+                        <button class="search-btn" id="searchBtn"><i class="fas fa-search"></i> Search</button>
+                    </div>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <h3 id="eventsCount">0</h3>
+                        <p>Events This Week</p>
+                    </div>
+                    <div class="stat">
+                        <h3 id="clubsCount">0</h3>
+                        <p>Active Clubs</p>
+                    </div>
+                    <div class="stat">
+                        <h3 id="studentsCount">0</h3>
+                        <p>Students Registered</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Dashboard Sections -->
+            <div class="dashboard-sections">
+                <!-- Home Section (Default) -->
+                <section class="dashboard-section active" id="homeSection">
+                    <div class="section-header">
+                        <h2>Upcoming Events</h2>
+                        <div class="view-options">
+                            <span class="filter-label">Filter by:</span>
+                            <div class="filter-buttons">
+                                <button class="filter-btn active" data-filter="all">All</button>
+                                <button class="filter-btn" data-filter="academic">Academic</button>
+                                <button class="filter-btn" data-filter="social">Social</button>
+                                <button class="filter-btn" data-filter="career">Career</button>
+                                <button class="filter-btn" data-filter="sports">Sports</button>
+                                <button class="filter-btn" data-filter="cultural">Cultural</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="events-grid" id="eventsGrid">
+                        <!-- Events will be dynamically loaded here -->
+                        <div class="loading-events">Loading events...</div>
+                    </div>
+                    
+                    <div class="featured-clubs">
+                        <h2>Featured Clubs & Organizations</h2>
+                        <div class="clubs-container" id="clubsContainer">
+                            <!-- Clubs will be dynamically loaded here -->
+                            <div class="loading-clubs">Loading clubs...</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- All Events Section -->
+                <section class="dashboard-section" id="eventsSection">
+                    <div class="section-header">
+                        <h2>All Campus Events</h2>
+                        <div class="events-controls">
+                            <div class="view-toggle">
+                                <button class="view-btn active" data-view="grid" id="gridViewBtn"><i class="fas fa-th"></i></button>
+                                <button class="view-btn" data-view="list" id="listViewBtn"><i class="fas fa-list"></i></button>
+                            </div>
+                            <select class="sort-select" id="sortSelect">
+                                <option value="date">Sort by: Date</option>
+                                <option value="popularity">Sort by: Popularity</option>
+                                <option value="name">Sort by: Name</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="events-container grid-view" id="allEventsContainer">
+                        <!-- All events will be dynamically loaded here -->
+                        <div class="loading-events">Loading all events...</div>
+                    </div>
+                </section>
+
+                <!-- Clubs Section -->
+                <section class="dashboard-section" id="clubsSection">
+                    <div class="section-header">
+                        <h2>Clubs & Organizations</h2>
+                        <p>Join campus clubs to connect with like-minded students and participate in exclusive events</p>
+                    </div>
+                    
+                    <div class="clubs-categories">
+                        <button class="category-btn active" data-category="all">All</button>
+                        <button class="category-btn" data-category="academic">Academic</button>
+                        <button class="category-btn" data-category="cultural">Cultural</button>
+                        <button class="category-btn" data-category="arts">Arts</button>
+                        <button class="category-btn" data-category="sports">Sports</button>
+                        <button class="category-btn" data-category="service">Service</button>
+                    </div>
+                    
+                    <div class="clubs-directory" id="clubsDirectory">
+                        <!-- Clubs directory will be dynamically loaded here -->
+                        <div class="loading-clubs">Loading clubs directory...</div>
+                    </div>
+                </section>
+
+                <!-- Calendar Section -->
+                <section class="dashboard-section" id="calendarSection">
+                    <div class="section-header">
+                        <h2>My Event Calendar</h2>
+                        <div class="calendar-controls">
+                            <button class="nav-btn" id="prevMonth"><i class="fas fa-chevron-left"></i></button>
+                            <h3 id="currentMonth">October 2023</h3>
+                            <button class="nav-btn" id="nextMonth"><i class="fas fa-chevron-right"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div class="calendar-wrapper">
+                        <div class="calendar-header">
+                            <div class="day-header">Sun</div>
+                            <div class="day-header">Mon</div>
+                            <div class="day-header">Tue</div>
+                            <div class="day-header">Wed</div>
+                            <div class="day-header">Thu</div>
+                            <div class="day-header">Fri</div>
+                            <div class="day-header">Sat</div>
+                        </div>
+                        <div class="calendar-body" id="calendarBody">
+                            <!-- Calendar days will be generated by JavaScript -->
+                            <div class="loading-calendar">Loading calendar...</div>
+                        </div>
+                    </div>
+                    
+                    <div class="my-events">
+                        <h3>My Registered Events</h3>
+                        <div class="registered-events" id="registeredEvents">
+                            <!-- Registered events will be loaded here -->
+                            <div class="no-events">You haven't registered for any events yet.</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Create Event Section -->
+                <section class="dashboard-section" id="createSection">
+                    <div class="section-header">
+                        <h2>Create New Event</h2>
+                        <p>Organize an event for your club, class, or organization</p>
+                    </div>
+                    
+                    <div class="create-event-form">
+                        <form id="eventForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="eventTitle">Event Title *</label>
+                                    <input type="text" id="eventTitle" placeholder="e.g., Annual Tech Conference" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="eventCategory">Category *</label>
+                                    <select id="eventCategory" required>
+                                        <option value="">Select Category</option>
+                                        <option value="academic">Academic</option>
+                                        <option value="social">Social</option>
+                                        <option value="career">Career</option>
+                                        <option value="sports">Sports</option>
+                                        <option value="cultural">Cultural</option>
+                                        <option value="workshop">Workshop</option>
+                                        <option value="conference">Conference</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="eventDate">Date *</label>
+                                    <input type="date" id="eventDate" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="eventTime">Time *</label>
+                                    <input type="time" id="eventTime" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="eventDuration">Duration</label>
+                                    <select id="eventDuration">
+                                        <option value="30">30 minutes</option>
+                                        <option value="60" selected>1 hour</option>
+                                        <option value="90">1.5 hours</option>
+                                        <option value="120">2 hours</option>
+                                        <option value="180">3 hours</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="eventLocation">Location *</label>
+                                    <input type="text" id="eventLocation" placeholder="e.g., Student Union Building, Room 205" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="eventClub">Hosting Club/Organization</label>
+                                    <select id="eventClub">
+                                        <option value="">Select Club (Optional)</option>
+                                        <option value="cs-club">Computer Science Club</option>
+                                        <option value="debate-club">Debate Society</option>
+                                        <option value="ai-club">AI & Robotics Club</option>
+                                        <option value="dance-club">Dance Collective</option>
+                                        <option value="entrepreneurship">Entrepreneurship Club</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="eventDescription">Event Description *</label>
+                                <textarea id="eventDescription" rows="5" placeholder="Describe your event, including agenda, speakers, and what attendees can expect..." required></textarea>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="eventCapacity">Maximum Capacity</label>
+                                    <input type="number" id="eventCapacity" min="1" max="500" placeholder="Leave empty for unlimited">
+                                </div>
+                                <div class="form-group">
+                                    <label for="eventImage">Event Image URL</label>
+                                    <input type="url" id="eventImage" placeholder="https://example.com/event-image.jpg">
+                                </div>
+                            </div>
+                            
+                            <div class="form-actions">
+                                <button type="button" class="btn-secondary" id="previewEventBtn">Preview Event</button>
+                                <button type="submit" class="btn-primary">Create Event</button>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- Notifications Section -->
+                <section class="dashboard-section" id="notificationsSection">
+                    <div class="section-header">
+                        <h2>Notifications</h2>
+                        <button class="btn-secondary" id="markAllReadBtn">Mark All as Read</button>
+                    </div>
+                    
+                    <div class="notifications-container" id="notificationsContainer">
+                        <!-- Notifications will be dynamically loaded here -->
+                        <div class="loading-notifications">Loading notifications...</div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Event Modal -->
+        <div class="modal" id="eventModal">
+            <div class="modal-content">
+                <button class="modal-close" id="modalCloseBtn">&times;</button>
+                <div class="modal-body" id="modalBody">
+                    <!-- Event details will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Success Notification -->
+        <div class="notification" id="notification">
+            <span id="notificationText">Event created successfully!</span>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    <h3>CampusConnect</h3>
+                    <p>Your gateway to campus life</p>
+                </div>
+                
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4>Platform</h4>
+                        <a href="#" id="footerEventsLink">Browse Events</a>
+                        <a href="#" id="footerClubsLink">Explore Clubs</a>
+                        <a href="#" id="footerCreateLink">Create Event</a>
+                        <a href="#" id="footerCalendarLink">Calendar</a>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Support</h4>
+                        <a href="#">Help Center</a>
+                        <a href="#">FAQ</a>
+                        <a href="#">Contact Us</a>
+                        <a href="#">Report Issue</a>
+                    </div>
+                    <div class="footer-column">
+                        <h4>University</h4>
+                        <a href="#">Student Services</a>
+                        <a href="#">Campus Map</a>
+                        <a href="#">Academic Calendar</a>
+                        <a href="#">University Website</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2023 CampusConnect. All rights reserved.</p>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="home.js"></script>
+</body>
+</html>
